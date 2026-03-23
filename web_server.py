@@ -9,6 +9,11 @@
 import json
 import time
 import uasyncio
+try:
+    from machine import RTC as _MachineRTC
+    _HAS_RTC = True
+except ImportError:
+    _HAS_RTC = False
 from lib.AgXRPLib.agxrp_sensor_kit import AgXRPSensorKit
 from lib.AgXRPLib.agxrp_web_dashboard import AgXRPWebDashboard
 from lib.AgXRPLib.agxrp_web_configure import AgXRPWebConfigure
@@ -147,9 +152,55 @@ def setup_webserver_display(dashboard, cfg):
                 register_fn(sensor_type=soil_cfg.get("type", "capacitive"))
 
 
+def init_rtc_from_log(cfg):
+    """Set RTC to the most recent timestamp found in sensor log files."""
+    if not _HAS_RTC:
+        return
+    filename = cfg.get("sensors", {}).get("csv_logger", {}).get("filename", "sensor_log.csv")
+    candidates = [filename, filename + ".bak"]
+    best_dt_str = None
+    for path in candidates:
+        try:
+            last_line = None
+            with open(path, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        last_line = line
+            if last_line is None:
+                continue
+            first_col = last_line.split(",")[0]
+            if len(first_col) != 19 or first_col == "datetime":
+                continue
+            if best_dt_str is None or first_col > best_dt_str:
+                best_dt_str = first_col
+        except OSError:
+            pass
+        except Exception as e:
+            print(f"Warning: could not read log file {path}: {e}")
+    if best_dt_str is None:
+        print("RTC: No log file found — RTC not initialized from log")
+        return
+    try:
+        year   = int(best_dt_str[0:4])
+        month  = int(best_dt_str[5:7])
+        day    = int(best_dt_str[8:10])
+        hour   = int(best_dt_str[11:13])
+        minute = int(best_dt_str[14:16])
+        second = int(best_dt_str[17:19])
+        if not (2020 <= year <= 2099 and 1 <= month <= 12 and 1 <= day <= 31):
+            print(f"RTC: Invalid log datetime '{best_dt_str}' — skipping")
+            return
+        _MachineRTC().datetime((year, month, day, 0, hour, minute, second, 0))
+        print(f"RTC: Initialized from log: {best_dt_str}")
+    except Exception as e:
+        print(f"RTC: Failed to set from log '{best_dt_str}': {e}")
+
+
 def main():
     """Config-driven main entry point."""
     cfg = load_config()
+    init_rtc_from_log(cfg)
     USE_RANDOM_DATA = cfg.get("use_random_data", False)
 
     print("Initializing AgXRP Sensor Kit, Controller, and Web Dashboard...")

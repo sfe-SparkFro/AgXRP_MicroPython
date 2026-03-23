@@ -11,6 +11,11 @@
 import json
 import random
 import time
+try:
+    from machine import RTC as _MachineRTC
+    _HAS_RTC = True
+except ImportError:
+    _HAS_RTC = False
 from phew import server, access_point, dns, logging
 from lib.AgXRPLib.agxrp_water_pump import AgXRPWaterPump
 
@@ -492,6 +497,30 @@ class AgXRPWebDashboard:
         server.add_route("/api/controller/plant_systems", api_controller_plant_systems_handler, methods=["GET"])
         server.add_route("/api/controller/plant_system/<sensor_index>/<pump_index>", api_controller_plant_system_update_handler, methods=["POST"])
 
+        def api_rtc_sync_handler(request):
+            if not _HAS_RTC:
+                return json.dumps({"status": "error", "message": "RTC not available"}), 503, {"Content-Type": "application/json"}
+            try:
+                data = request.data
+                if not data:
+                    return json.dumps({"status": "error", "message": "No JSON body"}), 400, {"Content-Type": "application/json"}
+                year    = int(data["year"])
+                month   = int(data["month"])
+                day     = int(data["day"])
+                hour    = int(data["hour"])
+                minute  = int(data["minute"])
+                second  = int(data["second"])
+                weekday = int(data["weekday"])
+                _MachineRTC().datetime((year, month, day, weekday, hour, minute, second, 0))
+                dt_str = f"{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
+                print(f"RTC: Synced from browser: {dt_str}")
+                return json.dumps({"status": "success", "datetime": dt_str}), 200, {"Content-Type": "application/json"}
+            except Exception as e:
+                print(f"RTC sync error: {e}")
+                return json.dumps({"status": "error", "message": str(e)}), 400, {"Content-Type": "application/json"}
+
+        server.add_route("/api/rtc/sync", api_rtc_sync_handler, methods=["POST"])
+
         server.set_callback(catchall_handler)
 
     def _turn_on_soil_sensor_led(self, pump_index):
@@ -859,6 +888,9 @@ class AgXRPWebDashboard:
             html += '        <div class="sensor-item"><span class="no-data">No sensors registered</span></div>\n'
 
         html += '        <div class="sensor-item" style="border-top:1px solid #eee;margin-top:4px;padding-top:6px;">'
+        html += '<span class="sensor-label" style="color:#607D8B;font-size:0.9em;">Date/Time:</span>'
+        html += '<span id="rtc-datetime-label" style="color:#607D8B;font-size:0.9em;font-family:monospace;">--</span></div>\n'
+        html += '        <div class="sensor-item">'
         html += '<span class="sensor-label" style="color:#999;font-size:0.85em;">Last updated:</span>'
         html += '<span class="sensor-value" id="last-updated-label" style="color:#999;font-size:0.85em;">-</span></div>\n'
 
@@ -1027,6 +1059,42 @@ class AgXRPWebDashboard:
         }
 
         setInterval(updateLastUpdatedLabel, 1000);
+
+        function updateRtcDatetimeLabel() {
+            const el = document.getElementById('rtc-datetime-label');
+            if (!el) return;
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            el.textContent = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) +
+                             ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+        }
+        setInterval(updateRtcDatetimeLabel, 1000);
+        updateRtcDatetimeLabel();
+
+        async function syncRtcFromBrowser() {
+            try {
+                const now = new Date();
+                const payload = {
+                    year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
+                    hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds(),
+                    weekday: (now.getDay() + 6) % 7
+                };
+                const resp = await fetch('/api/rtc/sync', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const result = await resp.json();
+                if (result.status === 'success') {
+                    console.log('RTC synced:', result.datetime);
+                } else {
+                    console.warn('RTC sync failed:', result.message);
+                }
+            } catch (e) {
+                console.warn('RTC sync error:', e);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', syncRtcFromBrowser);
 
         setInterval(fetchSensorData, 2000);
         fetchSensorData();
