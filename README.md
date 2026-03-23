@@ -1,6 +1,6 @@
 # AgXRP Sensor Kit Firmware
 
-MicroPython firmware for the AgXRP — an automated plant monitoring and watering system built on the XRP (eXtensible Robot Platform) board. It monitors soil moisture and environmental conditions, logs data to CSV, and automatically controls peristaltic water pumps, all accessible through a local web dashboard.
+MicroPython firmware for the AgXRP — an automated plant monitoring and watering system built on the XRP (Experiential Robotics Platform) board. It monitors soil moisture and environmental conditions, logs data to CSV, and automatically controls peristaltic water pumps, all accessible through a local web dashboard.
 
 ---
 
@@ -35,42 +35,6 @@ MicroPython firmware for the AgXRP — an automated plant monitoring and waterin
 
 Water pumps connect to the XRP motor outputs (encoded motor channels 1–4).
 
----
-
-## Getting Started
-
-### 1. Flash MicroPython
-
-Flash the RP2350 MicroPython firmware to the board. See the [MicroPython docs](https://micropython.org/download/) for instructions.
-
-### 2. Deploy Files
-
-Copy the firmware files to the board's filesystem using `mpremote`:
-
-```bash
-# Copy library and main script
-mpremote fs cp -r lib :lib + fs cp config.json :config.json + fs cp web_server.py :web_server.py
-```
-
-To run automatically on boot, also copy as `main.py`:
-
-```bash
-mpremote fs cp web_server.py :main.py
-```
-
-### 3. Configure
-
-Edit `config.json` to match your hardware before deploying, or use the web configuration page after the first boot (see below).
-
-### 4. Run
-
-```bash
-mpremote exec "exec(open('web_server.py').read())"
-```
-
-Or simply reset the board if `main.py` is installed.
-
----
 
 ## Web Interface
 
