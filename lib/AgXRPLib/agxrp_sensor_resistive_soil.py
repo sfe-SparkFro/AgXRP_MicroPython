@@ -8,8 +8,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from lib.AgXRPLib.qwiic_soil_moisture_sensor import QwiicSoilMoistureSensor
-from lib.AgXRPLib.agxrp_sensor import AgXRPSensor
+from qwiic_soil_moisture_sensor import QwiicSoilMoistureSensor
+from .agxrp_sensor import AgXRPSensor
 
 
 # Raw ADC range from Qwiic soil moisture sensor (10-bit)

@@ -57,7 +57,7 @@ import sys
 import math
 # import time
 
-import lib.qwiic_i2c as qwiic_i2c
+import qwiic_i2c
 
 from . import oled_fonts
 from . import oled_logos

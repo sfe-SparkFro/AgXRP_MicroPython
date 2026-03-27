@@ -8,8 +8,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from lib.AgXRPLib.agxrp_sensor import AgXRPSensor
-from lib.AgXRPLib.qwiic_cy8cmbr3 import QwiicCY8CMBR3
+from .agxrp_sensor import AgXRPSensor
+from qwiic_cy8cmbr3 import QwiicCY8CMBR3
 
 class AgXRPSensorSoil(AgXRPSensor):
     """!

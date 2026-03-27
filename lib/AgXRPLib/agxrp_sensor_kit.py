@@ -7,17 +7,17 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-import lib.qwiic_i2c as qwiic_i2c
-import lib.AgXRPLib.qwiic_oled as qwiic_oled
+import qwiic_i2c as qwiic_i2c
+import qwiic_oled as qwiic_oled
 import time
 import sys
 
-from lib.AgXRPLib.agxrp_sensor_scd4x import AgXRPSensorSCD4x
-from lib.AgXRPLib.agxrp_sensor_as7343 import AgXRPSensorAS7343
-from lib.AgXRPLib.agxrp_sensor_veml import AgXRPSensorVEML
-from lib.AgXRPLib.agxrp_sensor_soil import AgXRPSensorSoil
-from lib.AgXRPLib.agxrp_sensor_resistive_soil import AgXRPResistiveSoilSensor
-from lib.AgXRPLib.agxrp_csv_logger import AgXRPCSVLogger
+from .agxrp_sensor_scd4x import AgXRPSensorSCD4x
+from .agxrp_sensor_as7343 import AgXRPSensorAS7343
+from .agxrp_sensor_veml import AgXRPSensorVEML
+from .agxrp_sensor_soil import AgXRPSensorSoil
+from .agxrp_sensor_resistive_soil import AgXRPResistiveSoilSensor
+from .agxrp_csv_logger import AgXRPCSVLogger
 
 class AgXRPSensorKit:
     """!

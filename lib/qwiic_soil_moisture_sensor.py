@@ -10,7 +10,7 @@ This package can be used in conjunction with the overall [SparkFun qwiic Python 
 New to qwiic? Take a look at the entire [SparkFun qwiic ecosystem](https://www.sparkfun.com/qwiic).
 """
 
-import lib.qwiic_i2c as qwiic_i2c
+import qwiic_i2c
 
 #======================================================================
 # Basic setup of I2C commands and available I2C Addresses

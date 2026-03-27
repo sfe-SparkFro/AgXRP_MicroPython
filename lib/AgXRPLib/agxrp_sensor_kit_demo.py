@@ -10,7 +10,7 @@
 
 import sys
 import time
-from lib.AgXRPLib.agxrp_sensor_kit import AgXRPSensorKit
+from .agxrp_sensor_kit import AgXRPSensorKit
 
 def demo_full_configuration():
     """!

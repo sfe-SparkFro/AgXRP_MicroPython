@@ -14,11 +14,11 @@ try:
     _HAS_RTC = True
 except ImportError:
     _HAS_RTC = False
-from lib.AgXRPLib.agxrp_sensor_kit import AgXRPSensorKit
-from lib.AgXRPLib.agxrp_web_dashboard import AgXRPWebDashboard
-from lib.AgXRPLib.agxrp_web_configure import AgXRPWebConfigure
-from lib.AgXRPLib.agxrp_web_data_viewer import AgXRPWebDataViewer
-from lib.AgXRPLib.agxrp_controller import AgXRPController
+from AgXRPLib.agxrp_sensor_kit import AgXRPSensorKit
+from AgXRPLib.agxrp_web_dashboard import AgXRPWebDashboard
+from AgXRPLib.agxrp_web_configure import AgXRPWebConfigure
+from AgXRPLib.agxrp_web_data_viewer import AgXRPWebDataViewer
+from AgXRPLib.agxrp_controller import AgXRPController
 
 
 CONFIG_VERSION = 2
