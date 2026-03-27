@@ -287,18 +287,18 @@ class AgXRPWebConfigure:
         html += '<form method="POST" action="/configure/save">\n'
 
         html += self._section_general(cfg)
+        html += self._section_access_point(cfg)
         html += self._section_i2c(cfg)
+        html += self._section_controller(cfg)
+        html += self._section_pumps(cfg)
+        html += self._section_plant_systems(cfg)
+        html += self._section_sensor_interval(cfg)
         html += self._section_co2(cfg)
         html += self._section_spectral(cfg)
         html += self._section_light(cfg)
         html += self._section_soil(cfg)
         html += self._section_screen(cfg)
         html += self._section_csv_logger(cfg)
-        html += self._section_controller(cfg)
-        html += self._section_pumps(cfg)
-        html += self._section_plant_systems(cfg)
-        html += self._section_access_point(cfg)
-        html += self._section_sensor_interval(cfg)
 
         html += '<div class="card">\n'
         html += '  <button type="submit" class="btn btn-save">Save Configuration</button>\n'
