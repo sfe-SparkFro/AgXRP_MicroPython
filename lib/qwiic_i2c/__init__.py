@@ -79,7 +79,7 @@ _drivers = []
 # append them to the driver list if so
 for module_name, class_name in _supported_platforms.items():
 	try:
-		sub_module = __import__("lib.qwiic_i2c." + module_name, None, None, [None])
+		sub_module = __import__("qwiic_i2c." + module_name, None, None, [None])
 		_drivers.append(getattr(sub_module, class_name))
 	except:
 		pass

@@ -8,8 +8,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from lib.AgXRPLib.qwiic_as7343 import QwiicAS7343
-from lib.AgXRPLib.agxrp_sensor import AgXRPSensor
+from qwiic_as7343 import QwiicAS7343
+from .agxrp_sensor import AgXRPSensor
 
 class AgXRPSensorAS7343(AgXRPSensor):
     """!

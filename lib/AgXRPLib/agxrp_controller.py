@@ -10,7 +10,7 @@
 
 import time
 import uasyncio
-from lib.AgXRPLib.agxrp_water_pump import AgXRPWaterPump
+from .agxrp_water_pump import AgXRPWaterPump
 
 class AgXRPController:
     """!

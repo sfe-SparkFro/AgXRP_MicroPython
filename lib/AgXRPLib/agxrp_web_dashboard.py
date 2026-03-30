@@ -10,14 +10,13 @@
 
 import json
 import random
-import time
 try:
     from machine import RTC as _MachineRTC
     _HAS_RTC = True
 except ImportError:
     _HAS_RTC = False
 from phew import server, access_point, dns, logging
-from lib.AgXRPLib.agxrp_water_pump import AgXRPWaterPump
+from .agxrp_water_pump import AgXRPWaterPump
 
 class AgXRPWebDashboard:
     """!

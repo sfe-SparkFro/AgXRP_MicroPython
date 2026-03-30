@@ -8,8 +8,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from lib.AgXRPLib.qwiic_scd4x import QwiicSCD4x
-from lib.AgXRPLib.agxrp_sensor import AgXRPSensor
+from qwiic_scd4x import QwiicSCD4x
+from .agxrp_sensor import AgXRPSensor
 
 class AgXRPSensorSCD4x(AgXRPSensor):
     """!

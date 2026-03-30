@@ -5,11 +5,10 @@
 # AgXRPWaterPump class for controlling peristaltic pumps using encoded motors.
 #-------------------------------------------------------------------------------
 
-from lib.XRPLib.encoded_motor import EncodedMotor
+from XRPLib.encoded_motor import EncodedMotor
 from machine import Timer, RTC
 import micropython
 import time
-import os
 
 class AgXRPWaterPump:
     """!

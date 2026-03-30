@@ -8,8 +8,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from lib.AgXRPLib.qwiic_veml import QwiicVEML
-from lib.AgXRPLib.agxrp_sensor import AgXRPSensor
+from qwiic_veml import QwiicVEML
+from .agxrp_sensor import AgXRPSensor
 
 class AgXRPSensorVEML(AgXRPSensor):
     """!
