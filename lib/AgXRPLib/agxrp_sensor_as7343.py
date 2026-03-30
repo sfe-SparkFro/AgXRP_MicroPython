@@ -8,7 +8,7 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from qwiic_as7343 import QwiicAS7343
+from sensor_drivers.qwiic_as7343 import QwiicAS7343
 from .agxrp_sensor import AgXRPSensor
 
 class AgXRPSensorAS7343(AgXRPSensor):

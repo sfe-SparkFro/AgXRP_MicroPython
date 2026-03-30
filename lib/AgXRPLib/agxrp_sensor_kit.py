@@ -7,8 +7,8 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-import qwiic_i2c as qwiic_i2c
-import qwiic_oled as qwiic_oled
+from sensor_drivers import qwiic_i2c
+from sensor_drivers import qwiic_oled
 import time
 import sys
 

@@ -9,7 +9,7 @@
 #===============================================================================
 
 from .agxrp_sensor import AgXRPSensor
-from qwiic_cy8cmbr3 import QwiicCY8CMBR3
+from sensor_drivers.qwiic_cy8cmbr3 import QwiicCY8CMBR3
 
 class AgXRPSensorSoil(AgXRPSensor):
     """!

@@ -8,7 +8,7 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from qwiic_soil_moisture_sensor import QwiicSoilMoistureSensor
+from sensor_drivers.qwiic_soil_moisture_sensor import QwiicSoilMoistureSensor
 from .agxrp_sensor import AgXRPSensor
 
 

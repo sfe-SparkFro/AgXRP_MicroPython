@@ -6,6 +6,8 @@
 # All hardware configuration is read from config.json.
 #-------------------------------------------------------------------------------
 
+import sys
+sys.path.insert(0, '/lib/sensor_drivers')
 import json
 import time
 import uasyncio
