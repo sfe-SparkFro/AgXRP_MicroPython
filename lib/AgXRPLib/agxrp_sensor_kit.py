@@ -97,138 +97,147 @@ class AgXRPSensorKit:
             print(f"ERROR: Invalid bus number {bus}. Must be 0 or 1.")
             return None
     
-    def register_co2_sensor(self, bus=0):
+    def register_co2_sensor(self, bus=0, average=False):
         """!
         Register the SCD4x CO2 sensor.
-        
+
         @param bus: I2C bus number (0 or 1, default: 0)
+        @param average: Average readings over the CSV log interval (default: False)
         @return **bool** True if registration was successful, False otherwise
         """
         i2c_driver = self._get_i2c_driver(bus)
         if i2c_driver is None:
             print("ERROR: I2C driver not available for bus {}".format(bus))
             return False
-        
+
         print("Registering SCD4x sensor on bus {}...".format(bus))
         self.co2_sensor = AgXRPSensorSCD4x(i2c_driver=i2c_driver)
-        
+
         if not self.co2_sensor.begin():
             print("ERROR: Failed to initialize SCD4x sensor")
             self.co2_sensor = None
             return False
-        
+
+        self.co2_sensor.average_over_interval = average
         print("SCD4x sensor registered successfully")
         return True
     
-    def register_spectral_sensor(self, bus=0):
+    def register_spectral_sensor(self, bus=0, average=False):
         """!
         Register the AS7343 spectral sensor.
-        
+
         @param bus: I2C bus number (0 or 1, default: 0)
+        @param average: Average readings over the CSV log interval (default: False)
         @return **bool** True if registration was successful, False otherwise
         """
         i2c_driver = self._get_i2c_driver(bus)
         if i2c_driver is None:
             print("ERROR: I2C driver not available for bus {}".format(bus))
             return False
-        
+
         print("Registering AS7343 sensor on bus {}...".format(bus))
         self.spectral_sensor = AgXRPSensorAS7343(i2c_driver=i2c_driver)
-        
+
         if not self.spectral_sensor.begin():
             print("ERROR: Failed to initialize AS7343 sensor")
             self.spectral_sensor = None
             return False
 
         self.spectral_sensor.set_led_off()
-        
+        self.spectral_sensor.average_over_interval = average
         print("AS7343 sensor registered successfully")
         return True
     
-    def register_light_sensor(self, bus=0):
+    def register_light_sensor(self, bus=0, average=False):
         """!
         Register the VEML ambient light sensor.
-        
+
         @param bus: I2C bus number (0 or 1, default: 0)
+        @param average: Average readings over the CSV log interval (default: False)
         @return **bool** True if registration was successful, False otherwise
         """
         i2c_driver = self._get_i2c_driver(bus)
         if i2c_driver is None:
             print("ERROR: I2C driver not available for bus {}".format(bus))
             return False
-        
+
         print("Registering VEML sensor on bus {}...".format(bus))
         self.light_sensor = AgXRPSensorVEML(i2c_driver=i2c_driver)
-        
+
         if not self.light_sensor.begin():
             print("ERROR: Failed to initialize VEML sensor")
             self.light_sensor = None
             return False
-        
+
+        self.light_sensor.average_over_interval = average
         print("VEML sensor registered successfully")
         return True
     
-    def register_soil_sensor(self, sensor_index, bus, address=0x37):
+    def register_soil_sensor(self, sensor_index, bus, address=0x37, average=False):
         """!
         Register a soil moisture sensor.
-        
+
         @param sensor_index: Sensor index (1-4)
         @param bus: I2C bus number (0 or 1)
         @param address: I2C address (default: 0x37, the default for QwiicCY8CMBR3)
+        @param average: Average readings over the CSV log interval (default: False)
         @return **bool** True if registration was successful, False otherwise
         """
         if sensor_index < 1 or sensor_index > 4:
             print(f"ERROR: Invalid sensor_index {sensor_index}. Must be 1-4.")
             return False
-        
+
         if sensor_index in self.soil_sensors:
             print(f"WARNING: Soil sensor {sensor_index} is already registered. Overwriting...")
-        
+
         i2c_driver = self._get_i2c_driver(bus)
         if i2c_driver is None:
             print(f"ERROR: I2C driver not available for bus {bus}")
             return False
-        
+
         print(f"Registering soil sensor {sensor_index} on bus {bus}, address 0x{address:02X}...")
         self.soil_sensors[sensor_index] = AgXRPSensorSoil(i2c_driver=i2c_driver, address=address)
-        
+
         if not self.soil_sensors[sensor_index].begin():
             print(f"ERROR: Failed to initialize soil sensor {sensor_index}")
             del self.soil_sensors[sensor_index]
             return False
-        
+
+        self.soil_sensors[sensor_index].average_over_interval = average
         print(f"Soil sensor {sensor_index} registered successfully")
         return True
     
-    def register_resistive_soil_sensor(self, sensor_index, bus=0, address=0x28):
+    def register_resistive_soil_sensor(self, sensor_index, bus=0, address=0x28, average=False):
         """!
         Register a resistive (Qwiic) soil moisture sensor.
-        
+
         @param sensor_index: Sensor index (1-4)
         @param bus: I2C bus number (0 or 1, default: 0)
         @param address: I2C address (default: 0x28, the Qwiic soil moisture default)
+        @param average: Average readings over the CSV log interval (default: False)
         @return **bool** True if registration was successful, False otherwise
         """
         if sensor_index < 1 or sensor_index > 4:
             print(f"ERROR: Invalid sensor_index {sensor_index}. Must be 1-4.")
             return False
-        
+
         if sensor_index in self.soil_sensors:
             print(f"WARNING: Soil sensor {sensor_index} is already registered. Overwriting...")
-        
+
         i2c_driver = self._get_i2c_driver(bus)
         if i2c_driver is None:
             print(f"ERROR: I2C driver not available for bus {bus}")
             return False
-        
+
         print(f"Registering resistive soil sensor {sensor_index} on bus {bus}, address 0x{address:02X}...")
         self.soil_sensors[sensor_index] = AgXRPResistiveSoilSensor(i2c_driver=i2c_driver, address=address)
-        
+
         if not self.soil_sensors[sensor_index].begin():
             print(f"ERROR: Failed to initialize resistive soil sensor {sensor_index}")
             del self.soil_sensors[sensor_index]
             return False
-        
+
+        self.soil_sensors[sensor_index].average_over_interval = average
         print(f"Resistive soil sensor {sensor_index} registered successfully")
         return True
     
@@ -281,18 +290,44 @@ class AgXRPSensorKit:
         # Set callback to collect data from all sensors
         def collect_sensor_data():
             data = {}
+            sensors_to_clear = []
+
             if self.co2_sensor and self.co2_sensor.is_connected():
-                data.update(self.co2_sensor.get_csv_data())
+                if self.co2_sensor.average_over_interval:
+                    data.update(self.co2_sensor.get_running_mean_data())
+                    sensors_to_clear.append(self.co2_sensor)
+                else:
+                    data.update(self.co2_sensor.get_csv_data())
+
             if self.spectral_sensor and self.spectral_sensor.is_connected():
-                data.update(self.spectral_sensor.get_csv_data())
+                if self.spectral_sensor.average_over_interval:
+                    data.update(self.spectral_sensor.get_running_mean_data())
+                    sensors_to_clear.append(self.spectral_sensor)
+                else:
+                    data.update(self.spectral_sensor.get_csv_data())
+
             if self.light_sensor and self.light_sensor.is_connected():
-                data.update(self.light_sensor.get_csv_data())
+                if self.light_sensor.average_over_interval:
+                    data.update(self.light_sensor.get_running_mean_data())
+                    sensors_to_clear.append(self.light_sensor)
+                else:
+                    data.update(self.light_sensor.get_csv_data())
+
             for sensor_index, sensor in self.soil_sensors.items():
                 if sensor and sensor.is_connected():
+                    if sensor.average_over_interval:
+                        sensor_data = sensor.get_running_mean_data()
+                        sensors_to_clear.append(sensor)
+                    else:
+                        sensor_data = sensor.get_csv_data()
                     # Prefix data keys with sensor index
-                    sensor_data = sensor.get_csv_data()
                     for key, value in sensor_data.items():
                         data[f"{key}_{sensor_index}"] = value
+
+            # Reset running mean windows after data has been captured for logging
+            for sensor in sensors_to_clear:
+                sensor.clear_running_mean()
+
             return data
         
         self._csv_logger.set_sensor_data_callback(collect_sensor_data)
@@ -392,31 +427,35 @@ class AgXRPSensorKit:
             try:
                 if self.co2_sensor.update():
                     success = True
+                    self.co2_sensor.update_running_mean()
             except Exception as e:
                 print(f"Error updating SCD4x: {e}")
-        
+
         # Update AS7343
         if self.spectral_sensor and self.spectral_sensor.is_connected():
             try:
                 if self.spectral_sensor.update():
                     success = True
+                    self.spectral_sensor.update_running_mean()
             except Exception as e:
                 print(f"Error updating AS7343: {e}")
-        
+
         # Update VEML
         if self.light_sensor and self.light_sensor.is_connected():
             try:
                 if self.light_sensor.update():
                     success = True
+                    self.light_sensor.update_running_mean()
             except Exception as e:
                 print(f"Error updating VEML: {e}")
-        
+
         # Update soil sensors
         for sensor_index, sensor in self.soil_sensors.items():
             if sensor and sensor.is_connected():
                 try:
                     if sensor.update():
                         success = True
+                        sensor.update_running_mean()
                 except Exception as e:
                     print(f"Error updating soil sensor {sensor_index}: {e}")
         

@@ -334,6 +334,17 @@ class AgXRPWebDashboard:
                 elif hasattr(request, 'data') and request.data and "effort" in request.data:
                     effort = float(request.data["effort"])
 
+                log = False
+                log_raw = None
+                if hasattr(request, 'query') and request.query and "log" in request.query:
+                    log_raw = request.query["log"]
+                elif hasattr(request, 'form') and request.form and "log" in request.form:
+                    log_raw = request.form["log"]
+                elif hasattr(request, 'data') and request.data and "log" in request.data:
+                    log_raw = request.data["log"]
+                if log_raw is not None:
+                    log = str(log_raw).lower() in ("true", "1", "yes")
+
                 effort = max(-1.0, min(1.0, effort))
 
                 pump = None
@@ -343,8 +354,8 @@ class AgXRPWebDashboard:
                     pump = self._water_pumps[pump_index]
 
                 if pump:
-                    pump.set_pump_effort(effort, time_ms=0)
-                    print(f"Pump {pump_index} started with effort {effort}")
+                    pump.set_pump_effort(effort, time_ms=0, log=log)
+                    print(f"Pump {pump_index} started with effort {effort}, log={log}")
                     if self._controller:
                         self._turn_on_soil_sensor_led(pump_index)
                     return (json.dumps({"status": "success", "message": f"Pump {pump_index} started with effort {effort}"}), 200, "application/json")
@@ -921,6 +932,13 @@ class AgXRPWebDashboard:
                        step="0.1" min="-1.0" max="1.0" value="1.0"
                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box;">
             </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label class="form-label" style="font-size: 14px;">Log to CSV:</label>
+                <div class="form-radio-group">
+                    <label class="form-radio"><input type="radio" name="pump-log-{pump_index}" value="false" checked> No</label>
+                    <label class="form-radio"><input type="radio" name="pump-log-{pump_index}" value="true"> Yes</label>
+                </div>
+            </div>
             <div class="pump-controls">
                 <button type="button" class="pump-button pump-start-button" onclick="startPump({pump_index})" style="flex: 1;">Start Pump {pump_index}</button>
                 <button type="button" class="pump-button pump-stop-button" onclick="stopPump({pump_index})" style="flex: 1;">Stop Pump {pump_index}</button>
@@ -1104,7 +1122,10 @@ class AgXRPWebDashboard:
                 const effort = effortInput ? parseFloat(effortInput.value) : 1.0;
                 const clampedEffort = Math.max(-1.0, Math.min(1.0, effort));
 
-                const response = await fetch(`/pump/start/${pumpIndex}?effort=${clampedEffort}`);
+                const logRadio = document.querySelector(`input[name="pump-log-${pumpIndex}"]:checked`);
+                const logCsv = logRadio ? logRadio.value : 'false';
+
+                const response = await fetch(`/pump/start/${pumpIndex}?effort=${clampedEffort}&log=${logCsv}`);
                 const data = await response.json();
                 if (data.status !== 'success') {
                     alert('Error: ' + data.message);

@@ -166,16 +166,19 @@ class AgXRPWebConfigure:
         sensors["co2"] = {
             "enabled": self._form_bool(form, "co2_enabled"),
             "bus": self._form_int(form, "co2_bus"),
+            "average_over_interval": self._form_bool(form, "co2_average"),
         }
 
         sensors["spectral"] = {
             "enabled": self._form_bool(form, "spectral_enabled"),
             "bus": self._form_int(form, "spectral_bus"),
+            "average_over_interval": self._form_bool(form, "spectral_average"),
         }
 
         sensors["light"] = {
             "enabled": self._form_bool(form, "light_enabled"),
             "bus": self._form_int(form, "light_bus"),
+            "average_over_interval": self._form_bool(form, "light_average"),
         }
 
         # Soil — variable-length array
@@ -190,6 +193,7 @@ class AgXRPWebConfigure:
                 "sensor_index": self._form_int(form, "soil_{}_sensor_index".format(i), i + 1),
                 "bus": self._form_int(form, "soil_{}_bus".format(i)),
                 "address": self._form_str(form, "soil_{}_address".format(i), "0x37"),
+                "average_over_interval": self._form_bool(form, "soil_{}_average".format(i)),
             })
         sensors["soil"] = soil_list
 
@@ -445,6 +449,8 @@ class AgXRPWebConfigure:
         h = '<div class="card"><h2>CO2 Sensor (SCD4x)</h2>\n'
         h += self._radio_field("co2_enabled", "Enabled", s.get("enabled", False))
         h += self._bus_select("co2_bus", s.get("bus", 0))
+        h += self._radio_field("co2_average", "Average over interval",
+                               s.get("average_over_interval", False))
         h += '</div>\n'
         return h
 
@@ -453,6 +459,8 @@ class AgXRPWebConfigure:
         h = '<div class="card"><h2>Spectral Sensor (AS7343)</h2>\n'
         h += self._radio_field("spectral_enabled", "Enabled", s.get("enabled", False))
         h += self._bus_select("spectral_bus", s.get("bus", 0))
+        h += self._radio_field("spectral_average", "Average over interval",
+                               s.get("average_over_interval", False))
         h += '</div>\n'
         return h
 
@@ -461,6 +469,8 @@ class AgXRPWebConfigure:
         h = '<div class="card"><h2>Light Sensor (VEML)</h2>\n'
         h += self._radio_field("light_enabled", "Enabled", s.get("enabled", False))
         h += self._bus_select("light_bus", s.get("bus", 0))
+        h += self._radio_field("light_average", "Average over interval",
+                               s.get("average_over_interval", False))
         h += '</div>\n'
         return h
 
@@ -487,6 +497,8 @@ class AgXRPWebConfigure:
             h += self._select_field("{}_address".format(prefix), "Address",
                                     entry.get("address", "0x37"),
                                     [("0x28", "0x28"), ("0x37", "0x37")])
+            h += self._radio_field("{}_average".format(prefix), "Average over interval",
+                                   entry.get("average_over_interval", False))
             h += '</div>\n'
         h += '</div>\n'
         return h

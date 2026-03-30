@@ -46,26 +46,37 @@ def setup_sensors(agxrp, cfg):
             agxrp.register_resistive_soil_sensor(
                 soil_cfg["sensor_index"],
                 bus=soil_cfg.get("bus", 0),
-                address=address
+                address=address,
+                average=soil_cfg.get("average_over_interval", False)
             )
         else:
             agxrp.register_soil_sensor(
                 soil_cfg["sensor_index"],
                 bus=soil_cfg.get("bus", 0),
-                address=address
+                address=address,
+                average=soil_cfg.get("average_over_interval", False)
             )
 
     # CO2 sensor (SCD4x)
     if sensors_cfg.get("co2", {}).get("enabled", False):
-        agxrp.register_co2_sensor(bus=sensors_cfg["co2"].get("bus", 0))
+        agxrp.register_co2_sensor(
+            bus=sensors_cfg["co2"].get("bus", 0),
+            average=sensors_cfg["co2"].get("average_over_interval", False)
+        )
 
     # Spectral sensor (AS7343)
     if sensors_cfg.get("spectral", {}).get("enabled", False):
-        agxrp.register_spectral_sensor(bus=sensors_cfg["spectral"].get("bus", 0))
+        agxrp.register_spectral_sensor(
+            bus=sensors_cfg["spectral"].get("bus", 0),
+            average=sensors_cfg["spectral"].get("average_over_interval", False)
+        )
 
     # Light sensor (VEML)
     if sensors_cfg.get("light", {}).get("enabled", False):
-        agxrp.register_light_sensor(bus=sensors_cfg["light"].get("bus", 0))
+        agxrp.register_light_sensor(
+            bus=sensors_cfg["light"].get("bus", 0),
+            average=sensors_cfg["light"].get("average_over_interval", False)
+        )
 
     # OLED screen
     if sensors_cfg.get("screen", {}).get("enabled", False):
