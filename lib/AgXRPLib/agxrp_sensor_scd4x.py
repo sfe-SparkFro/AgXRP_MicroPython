@@ -8,7 +8,7 @@
 # Written for AgXRPSensorKit, 2024
 #===============================================================================
 
-from sensor_drivers.qwiic_scd4x import QwiicSCD4x
+from qwiic_scd4x import QwiicSCD4x
 from .agxrp_sensor import AgXRPSensor
 
 class AgXRPSensorSCD4x(AgXRPSensor):
